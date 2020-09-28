@@ -1,6 +1,6 @@
-const express = require("express"); 
-const app = express(); 
-const PORT = 8080; 
+const express = require("express");
+const app = express();
+const PORT = 8080;
 
 app.set("view engine", "ejs");
 
@@ -9,18 +9,33 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
 app.get("/", (req, res) => {
   res.send("Hello There!");
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n")
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
 });
+
+app.get("/hello", (req, res) => {
+  const templateVars = { greeting: 'Hello World!' };
+  res.render("hello_world", templateVars);
+});
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
+//  app.get(path, (request, response) => {
+//  what do i want to happen when a user goes to this path
+//ex:
+// send json?
+// send html? res.render("ejs file name", templateVars"optional" an object, array ect. JS!)
+//});
+
