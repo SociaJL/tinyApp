@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/SociaJL/tinyApp/issues"
   },
-  "homepage": "https://github.com/SociaJL/tinyApp#readme"
+  "homepage": "https://github.com/SociaJL/tinyApp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
