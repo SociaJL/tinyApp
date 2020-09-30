@@ -10,6 +10,21 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8)
 }
 
+// const userDatabase = {
+//   name: {
+//     nicename: "lowercasename",
+//     fullname: "fullname",
+//     email: "emailaddress@email.com",
+//     password:"password"
+//   },
+//   name2: {
+//     nicename: "lowercasename",
+//     fullname: "fullname",
+//     email: "emailaddress@email.com",
+//     password:"password"
+//   }
+// }
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -57,7 +72,7 @@ app.post("/urls", (req, res) => {
   let newurl = req.body.longURL
   let newRandomShortUrl = generateRandomString(newurl)
   urlDatabase[newRandomShortUrl] = newurl
-  console.log(urlDatabase)
+  //console.log(urlDatabase)
   // console.log(req.body);  // Log the POST request body to the console
   // res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
@@ -68,8 +83,10 @@ app.get("/u/:shortURL", (req, res) => {
 
 });
 
-app.get("/login", (req, res) => {
-  res.cookie("username")
+app.post("/login", (req, res) => {
+  
+  const newUser = req.body.username
+  res.cookie('username', newUser)
   res.redirect("/urls")
 })
 
