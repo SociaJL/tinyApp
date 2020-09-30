@@ -53,7 +53,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body)
+  //console.log(req.body)
   let newurl = req.body.longURL
   let newRandomShortUrl = generateRandomString(newurl)
   urlDatabase[newRandomShortUrl] = newurl
@@ -68,14 +68,24 @@ app.get("/u/:shortURL", (req, res) => {
 
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls")
+  console.log("req.params:", req.params)
+  // console.log("req.body", req.body)
+})
+
+
+app.post("/urls/:shortURL/update", (req, res) => {
+  console.log(req.params)
+  let newurl = req.body.longURL
+  urlDatabase[req.params.shortURL] = newurl
+  res.redirect("/urls")
+  console.log(urlDatabase)
+  // console.log(req.body);  // Log the POST request body to the console
+  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-//  app.get(path, (request, response) => {
-//  what do i want to happen when a user goes to this path
-//ex:
-// send json?
-// send html? res.render("ejs file name", templateVars"optional" an object, array ect. JS!)
-//});
 
