@@ -2,8 +2,10 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 function generateRandomString() {
@@ -30,7 +32,12 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-
+// cont urlDatabase = {
+//   b2xVn2: {
+//     longURL: "http://www.lighthouselabs.ca",
+//     shortURL: 
+//   }
+// }
 
 app.get("/", (req, res) => {
   res.send("Hello There!");
@@ -42,27 +49,33 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = { 
-    urls: urlDatabase 
+    urls: urlDatabase, 
+    username: req.cookies["username"]
   };
 
   res.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+app.get("/urls/new", (req, res) => {    // everywhere there is a render, update to add the cookies. ALSO _header conditionals/
+  const templateVars = { 
+    username: req.cookies["username"],
+  }
+  res.render("urls_new", templateVars);
 })
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { 
     shortURL: req.params.shortURL, 
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"],
   }
   res.render("urls_show", templateVars)
 })
 
 app.get("/hello", (req, res) => {
   const templateVars = { 
-    greeting: 'Hello World!' 
+    greeting: 'Hello World!',
+    username: req.cookies["username"], 
   };
   res.render("hello_world", templateVars);
 });
@@ -73,8 +86,7 @@ app.post("/urls", (req, res) => {
   let newRandomShortUrl = generateRandomString(newurl)
   urlDatabase[newRandomShortUrl] = newurl
   //console.log(urlDatabase)
-  // console.log(req.body);  // Log the POST request body to the console
-  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -87,6 +99,11 @@ app.post("/login", (req, res) => {
   
   const newUser = req.body.username
   res.cookie('username', newUser)
+  res.redirect("/urls")
+})
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username")
   res.redirect("/urls")
 })
 
