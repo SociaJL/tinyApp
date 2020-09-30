@@ -74,7 +74,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/hello", (req, res) => {
   const templateVars = { 
-    greeting: 'Hello World!',
+    greeting: 'Home Page',
     username: req.cookies["username"], 
   };
   res.render("hello_world", templateVars);
@@ -107,6 +107,18 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls")
 })
 
+app.post("/register", (req, res) => {
+
+ 
+})
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies.username
+  }
+  res.render("register", templateVars)
+})
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL]
   res.redirect("/urls")
@@ -116,14 +128,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  //console.log(req.params)
   let newurl = req.body.longURL
   urlDatabase[req.params.shortURL] = newurl
   res.redirect("/urls")
-  //console.log(urlDatabase)
-  // console.log(req.body);  // Log the POST request body to the console
-  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
