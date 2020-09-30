@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const PORT = 8080;
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
@@ -13,8 +15,6 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
 
 
 app.get("/", (req, res) => {
@@ -69,7 +69,8 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  
+  res.cookie("username")
+  res.redirect("/urls")
 })
 
 app.post("/urls/:shortURL/delete", (req, res) => {
