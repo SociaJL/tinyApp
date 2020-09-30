@@ -68,6 +68,10 @@ app.get("/u/:shortURL", (req, res) => {
 
 });
 
+app.get("/login", (req, res) => {
+  
+})
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL]
   res.redirect("/urls")
@@ -77,11 +81,11 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  console.log(req.params)
+  //console.log(req.params)
   let newurl = req.body.longURL
   urlDatabase[req.params.shortURL] = newurl
   res.redirect("/urls")
-  console.log(urlDatabase)
+  //console.log(urlDatabase)
   // console.log(req.body);  // Log the POST request body to the console
   // res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
