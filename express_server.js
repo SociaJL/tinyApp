@@ -48,9 +48,14 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  // extract id from cookie
+  const userId = req.cookies["userId"]
+  const user = users[userId]
+  console.log(user)
+  console.log(users)
   const templateVars = { 
     urls: urlDatabase, 
-    username: req.cookies["username"]
+    user: user
   };
 
   res.render("urls_index", templateVars);
@@ -96,9 +101,8 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  
+  console.log(req.body)
   const newUser = req.body.username
-  res.cookie('username', newUser)
   res.redirect("/urls")
 })
 
@@ -108,9 +112,12 @@ app.post("/logout", (req, res) => {
 })
 
 app.get("/register", (req, res) => {
-  const templateVars = {
-    username: req.cookies.username
-  }
+  const userId = req.cookies["userId"]
+  const user = users[userId]
+  const templateVars = { 
+    urls: urlDatabase, 
+    user: user
+  };
   res.render("register", templateVars)
 })
 
@@ -129,13 +136,14 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  
   const userId = generateRandomString(req.body.username)
   const userEmail = req.body.email
   const userPassword = req.body.password
   console.log(users)
-  
   let newUser = new User(userId, userEmail, userPassword)
   users[userId] = newUser
+  res.cookie('userId', userId)
   res.redirect("/urls")
   console.log(users)
 });
