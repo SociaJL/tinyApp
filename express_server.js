@@ -12,32 +12,32 @@ function generateRandomString() {
   return Math.random().toString(36).substring(2, 8)
 }
 
-// const userDatabase = {
-//   name: {
-//     nicename: "lowercasename",
-//     fullname: "fullname",
-//     email: "emailaddress@email.com",
-//     password:"password"
-//   },
-//   name2: {
-//     nicename: "lowercasename",
-//     fullname: "fullname",
-//     email: "emailaddress@email.com",
-//     password:"password"
-//   }
-// }
+class User {
+  constructor(id, email, password) {
+    
+    this.id = id; 
+    this.email = email; 
+    this.password = password;
+  }
+}
+
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
-// cont urlDatabase = {
-//   b2xVn2: {
-//     longURL: "http://www.lighthouselabs.ca",
-//     shortURL: 
-//   }
-// }
 
 app.get("/", (req, res) => {
   res.send("Hello There!");
@@ -107,11 +107,6 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls")
 })
 
-app.post("/register", (req, res) => {
-
- 
-})
-
 app.get("/register", (req, res) => {
   const templateVars = {
     username: req.cookies.username
@@ -131,6 +126,18 @@ app.post("/urls/:shortURL/update", (req, res) => {
   let newurl = req.body.longURL
   urlDatabase[req.params.shortURL] = newurl
   res.redirect("/urls")
+});
+
+app.post("/register", (req, res) => {
+  const userId = generateRandomString(req.body.username)
+  const userEmail = req.body.email
+  const userPassword = req.body.password
+  console.log(users)
+  
+  let newUser = new User(userId, userEmail, userPassword)
+  users[userId] = newUser
+  res.redirect("/urls")
+  console.log(users)
 });
 
 app.listen(PORT, () => {
