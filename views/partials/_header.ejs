@@ -10,20 +10,28 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if(!user){ %>
-      <form class="form-inline" action="/login" method="POST">
-        <div class="form-group mb-2">
-          <input class="form-control" type="text" name="username" placeholder="username" style="width: 300px; margin: 1em">
-          <button type="submit" class="btn btn-primary">Sign-in</button>
-        </div>
-      </form>
-      <% } else { %>
+    <% if(user){ %>
         <h>Logged in as: <%= user.email %></h>
         <form class="form-inline" action="/logout" method="POST">
           <div class="form-group mb-2">
             <button type="submit" class="btn btn-primary">logout</button>
           </div>
         </form>
-      <% } %>
+      
+      <% } else {%>
+        <form class="form-inline" action="/login" method="GET">
+          <div class="form-group mb-2">
+            <button type="submit" class="btn btn-primary">login</button>
+          </div>
+        </form>
+        <form class="form-inline" action="/register" method="GET">
+          <div class="form-group mb-2">
+            <button type="submit" class="btn btn-primary">register</button>
+          </div>
+        </form>
+        <% } %>
   </nav>
 </header>
+
+<!-- if not logged in -> display log in button that redirects to login page-->
+<!-- if user logged in -> display logged in as with a logout button -->
