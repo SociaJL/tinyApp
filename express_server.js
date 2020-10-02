@@ -56,9 +56,9 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  
+
   const user = users[req.cookies["user_id"]]
-  
+
   const templateVars = {
     urls: urlDatabase,
     user: user
@@ -66,16 +66,21 @@ app.get("/urls", (req, res) => {
 
   res.render("urls_index", templateVars);
 });
+// if user is not logged in re direct to login res.redirect
+// to check if logged in 
+// check for value of cookie named user_id (loop for match)
+// match? yes theyre logged in : redirect url/login
 
 app.get("/urls/new", (req, res) => {
-  // if user is not logged in re direct to login res.redirect
-  // to check if logged in 
-  // check for value of cookie named user_id (loop for match)
-  // match? yes theyre logged in : redirect url/login
-  const templateVars = {
-    user: req.cookies["user_id"],
+  const { user_id } = req.session;
+  if (!user_id) {
+    res.redirect("/login")
+  } else {
+    const templateVars = {
+      user: req.cookies["user_id"],
+    }
+    res.render("urls_new", templateVars);
   }
-  res.render("urls_new", templateVars);
 })
 
 app.post("/urls", (req, res) => {
@@ -119,16 +124,16 @@ app.post("/login", (req, res) => {
   const pass = req.body.password
 
   if (checkEmail(email, users)) {
-   for (const user in users) {
-     if (users[user].email === email) {
-       if (users[user].password === pass) {
-        res.cookie('user_id', user)
-        res.redirect('/urls')
-       } else {
-        res.sendStatus(403)
-       }
-     }
-   }
+    for (const user in users) {
+      if (users[user].email === email) {
+        if (users[user].password === pass) {
+          res.cookie('user_id', user)
+          res.redirect('/urls')
+        } else {
+          res.sendStatus(403)
+        }
+      }
+    }
   } else {
     res.sendStatus(403)
   }
