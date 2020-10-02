@@ -43,8 +43,8 @@ const checkEmail = (email, users) => {
 
 //// URLS ////
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "user_id" },
+  "9sm5xK": {longURL: "http://www.google.com", userID: "user_id" }
 };
 
 // app.get("/", (req, res) => {
@@ -66,21 +66,17 @@ app.get("/urls", (req, res) => {
 
   res.render("urls_index", templateVars);
 });
-// if user is not logged in re direct to login res.redirect
-// to check if logged in 
-// check for value of cookie named user_id (loop for match)
-// match? yes theyre logged in : redirect url/log
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    user: req.cookies["user_id"],
+    user: users[req.cookies.user_id], // change all 
   }
-  if (req.params.user_id) {
+  if (req.cookies.user_id) {
     res.render('urls_new', templateVars)
   } else {
     res.redirect('/login')
   }
-})
+});
 
 app.post("/urls", (req, res) => {
   //console.log(req.body)
@@ -94,7 +90,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    user: req.cookies["user_id"],
+    user: users[req.cookies.user_id],
   }
   res.render("urls_show", templateVars)
 })
@@ -110,7 +106,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/hello", (req, res) => {
   const templateVars = {
     greeting: 'Home Page',
-    user: req.cookies["user_id"],
+    user: users[req.cookies.user_id],
   };
   res.render("hello_world", templateVars);
 });
