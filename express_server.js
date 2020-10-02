@@ -56,9 +56,9 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-
+  
   const user = users[req.cookies["user_id"]]
-
+  
   const templateVars = {
     urls: urlDatabase,
     user: user
@@ -69,17 +69,16 @@ app.get("/urls", (req, res) => {
 // if user is not logged in re direct to login res.redirect
 // to check if logged in 
 // check for value of cookie named user_id (loop for match)
-// match? yes theyre logged in : redirect url/login
+// match? yes theyre logged in : redirect url/log
 
 app.get("/urls/new", (req, res) => {
-  const { user_id } = req.session;
-  if (!user_id) {
-    res.redirect("/login")
+  const templateVars = {
+    user: req.cookies["user_id"],
+  }
+  if (req.params.user_id) {
+    res.render('urls_new', templateVars)
   } else {
-    const templateVars = {
-      user: req.cookies["user_id"],
-    }
-    res.render("urls_new", templateVars);
+    res.redirect('/login')
   }
 })
 
@@ -89,7 +88,6 @@ app.post("/urls", (req, res) => {
   let newRandomShortUrl = generateRandomString(newurl)
   urlDatabase[newRandomShortUrl] = newurl
   //console.log(urlDatabase)
-
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -124,16 +122,16 @@ app.post("/login", (req, res) => {
   const pass = req.body.password
 
   if (checkEmail(email, users)) {
-    for (const user in users) {
-      if (users[user].email === email) {
-        if (users[user].password === pass) {
-          res.cookie('user_id', user)
-          res.redirect('/urls')
-        } else {
-          res.sendStatus(403)
-        }
-      }
-    }
+   for (const user in users) {
+     if (users[user].email === email) {
+       if (users[user].password === pass) {
+        res.cookie('user_id', user)
+        res.redirect('/urls')
+       } else {
+        res.sendStatus(403)
+       }
+     }
+   }
   } else {
     res.sendStatus(403)
   }
