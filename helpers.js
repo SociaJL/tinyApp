@@ -1,3 +1,8 @@
+const urlDatabase = {
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
+  "9sm5xK": {longURL: "http://www.google.com", userID: "user2RandomID" }
+};
+
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -21,23 +26,9 @@ const checkEmail = (email, users) => {
   return false;
 }
 
-console.log(checkEmail("user@ex1ample.com", users))
-
-// step by step!
-
-const getUserById = (userDB, ID) => {
-  for (let user in userDB) {
-    if (userDB[user].id === ID) {
-      return userDB[user];
-    }
-  }
-};
-
-const urlDatabase = {
-  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
-  "9sm5xK": {longURL: "http://www.google.com", userID: "user2RandomID" }
-};
-
+function generateRandomString() {
+  return Math.random().toString(36).substring(2, 8)
+}
 
 const getURLForUser = (urlDatabase, user_id) => {
 let result = {}
@@ -49,4 +40,7 @@ let result = {}
   return result; 
 }
 
-console.log(getURLForUser(urlDatabase, "userRandomID"))
+
+module.exports = {
+  checkEmail, generateRandomString, getURLForUser,
+}
