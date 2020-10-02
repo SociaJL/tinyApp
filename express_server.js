@@ -6,6 +6,7 @@ const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const { checkEmail, generateRandomString, getURLForUser, } = require("./helpers");
 
+app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
@@ -16,7 +17,7 @@ app.use(cookieSession({
 }));
 
 
-app.set("view engine", "ejs");
+
 
 //// DBs ////
 const users = {
@@ -39,6 +40,24 @@ const urlDatabase = {
 
 
 
+//// Routing ////
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls")
+  console.log("req.params:", req.params)
+});
+
+app.post("/urls/:shortURL/update", (req, res) => {
+  let newurl = req.body.longURL
+  if (req.session.user_id) {
+    urlDatabase[req.params.shortURL].longURL = newurl
+    res.redirect("/urls")
+
+  } else {
+    res.redirect('/login')
+  }
+});
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -55,25 +74,24 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.post("/urls", (req, res) => {
+  let newurl = req.body.longURL
+  let newRandomShortUrl = generateRandomString(newurl)
+
+  urlDatabase[newRandomShortUrl] = { longURL: newurl, userID: req.session.user_id }
+  res.redirect(`/urls/${newRandomShortUrl}`)
+});
+
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    user: users[req.session.user_id], // change all 
+    user: users[req.session.user_id],
   }
+
   if (req.session.user_id) {
     res.render('urls_new', templateVars)
   } else {
     res.redirect('/login')
   }
-});
-
-app.post("/urls", (req, res) => {
-  //console.log(req.body)
-  let newurl = req.body.longURL
-  let newRandomShortUrl = generateRandomString(newurl)
-  // "9sm5xK": {longURL: "http://www.google.com", userID: "user2RandomID" }
-  urlDatabase[newRandomShortUrl] = { longURL: newurl, userID: req.session.user_id }
-  res.redirect(`/urls/${newRandomShortUrl}`)
-  //console.log(urlDatabase)
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -90,8 +108,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-
-//// HOME ////
 app.get("/hello", (req, res) => {
   const templateVars = {
     greeting: 'Home Page',
@@ -100,12 +116,11 @@ app.get("/hello", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
-// check for errors first 
-//// LOGIN ////
+//// Login/Out ////
 app.post("/login", (req, res) => {
   const email = req.body.email
-  const providedPass = req.body.password // p
-
+  const providedPass = req.body.password
+  
   if (checkEmail(email, users)) {
     for (const user in users) {
       if (users[user].email === email) {
@@ -120,48 +135,37 @@ app.post("/login", (req, res) => {
   } else {
     res.sendStatus(403)
   }
-})
-
+});
 
 app.get('/login', (req, res) => {
   const templateVars = {
     user: ""
   }
   res.render('login', templateVars)
-})
+});
 
-
-//// LOGOUT ////
 app.post("/logout", (req, res) => {
   res.clearCookie("session")
   res.redirect("/login")
-})
+});
 
-
-
-
-
-
-//// REGISTER ////
+//// Registration ////
 app.get("/register", (req, res) => {
-
   const templateVars = {
     urls: urlDatabase,
     user: "",
   };
   res.render("register", templateVars)
-})
+});
 
 app.post("/register", (req, res) => {
-
   const userId = generateRandomString()
   const userEmail = req.body.email
   const userPassword = req.body.password
-
+  
   if (!userEmail || !userPassword || checkEmail(userEmail, users)) {
     res.redirect("/errors")
   } else {
-
     users[userId] = {
       id: userId,
       email: userEmail,
@@ -172,41 +176,10 @@ app.post("/register", (req, res) => {
   }
 });
 
-
-
-
-
-
-//// DB shortURL 
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL]
-  res.redirect("/urls")
-  console.log("req.params:", req.params)
-  // console.log("req.body", req.body)
-})
-
-app.post("/urls/:shortURL/update", (req, res) => {
-  let newurl = req.body.longURL
-  if (req.session.user_id) {
-    urlDatabase[req.params.shortURL].longURL = newurl
-    res.redirect("/urls")
-
-  } else {
-    res.redirect('/login')
-  }
-});
-
-
-//// ERROR ////
 app.get('/errors', (req, res) => {
-
   res.render('errors')
-})
-
-
-
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
