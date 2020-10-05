@@ -65,13 +65,16 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
 
   const user = users[req.session.user_id]
-
+  if (!user) {
+    res.render('loginError', { status: 400, error: 'Not Logged In!' });
+  } else {
   const templateVars = {
     urls: getURLForUser(urlDatabase, req.session.user_id),
     user: user
   };
   console.log(req.session.user_id)
   res.render("urls_index", templateVars);
+}
 });
 
 app.post("/urls", (req, res) => {
